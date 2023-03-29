@@ -6,28 +6,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import silgar.fmsuploadfile.service.IUpdateFileService;
+import silgar.fmsuploadfile.service.StoreService;
+import silgar.fmsuploadfile.service.ValidateFileService;
 
 @RestController
-@RequestMapping(produces = {"application/json", "application/xml"})
 public class UpdateFileController {
 
-    private final IUpdateFileService iUpdateFileService;
+    private final StoreService storeService;
+    private final ValidateFileService validateFileService;
 
     @Autowired
-    public UpdateFileController (IUpdateFileService updateFileService){
-        this.iUpdateFileService = updateFileService;
+    public UpdateFileController (StoreService storeService, ValidateFileService validateFileService){
+        this.storeService = storeService;
+        this.validateFileService = validateFileService;
     }
 
     /*
-    Upload a file to the Storage
+    Upload a file to the Storage if file passes validations
      */
     @PostMapping(path = "/upload")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
-
-        iUpdateFileService.store(file);
+        validateFileService.validate(file);
+        storeService.store(file);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Custom-Header", "foo - Department");
@@ -38,7 +40,7 @@ public class UpdateFileController {
     /*
     Check if controller is well configured and able to send a status and a response
      */
-    @GetMapping("/correct/{text}")
+    @GetMapping("/request-args/{text}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<String> checkWellBehaviour(@PathVariable String text) {
@@ -48,7 +50,7 @@ public class UpdateFileController {
     /*
     Check if the application is running
      */
-    @GetMapping(value = "/status")
+    @GetMapping(value = "/health")
     @ResponseBody
     public String status() {
         return "Upload File Application is running...";
