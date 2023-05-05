@@ -25,23 +25,21 @@ public class UpdateFileController {
     Upload a file to the Storage if file passes validations
      */
     @PostMapping(path = "/upload")
-    @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
-        validateFileService.validate(file);
-        storeService.store(file);
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file)  {
+        validateFileService.validateFile(file);
+        storeService.store(file);//TODO: no estoy tratando el Mono
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Custom-Header", "foo - Department");
+        headers.add("Custom-Header", "UpdateFileController");
 
-        return ResponseEntity.ok().headers(headers).body("You successfully uploaded " + file.getOriginalFilename() + "!");
+        return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body("You successfully uploaded " + file.getOriginalFilename() + "!");
     }
 
     /*
     Check if controller is well configured and able to send a status and a response
      */
     @GetMapping("/request-args/{text}")
-    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ResponseEntity<String> checkWellBehaviour(@PathVariable String text) {
         return ResponseEntity.ok().body(text);
@@ -52,8 +50,8 @@ public class UpdateFileController {
      */
     @GetMapping(value = "/health")
     @ResponseBody
-    public String status() {
-        return "Upload File Application is running...";
+    public ResponseEntity<String> status() {
+        return ResponseEntity.ok().body("Upload File Application is running...");
     }
 
 

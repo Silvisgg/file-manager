@@ -1,5 +1,7 @@
 package silgar.fmsuploadfile.service;
 
+
+import com.sun.jdi.InternalException;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ public class StoreService {
 
     private String uri;
 
-    public Mono<HttpStatus> store(MultipartFile file) throws Exception{
+    public Mono<HttpStatus> store(MultipartFile file) {
         log.info("Starting NON-BLOCKING Controller!");
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", file.getResource());
@@ -37,8 +39,7 @@ public class StoreService {
                         log.info("OK: storing file in uri: "+ uri);
                         return response.bodyToMono(HttpStatus.class).thenReturn(response.statusCode());
                     } else {
-                        log.error("Error: storing file in uri: "+ uri);
-                        return response.bodyToMono(HttpStatus.class).thenReturn(response.statusCode());
+                        throw new InternalException("Error: storing file in uri: " + uri);
                     }
                 });
 
