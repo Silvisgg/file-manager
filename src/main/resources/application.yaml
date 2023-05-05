@@ -7,9 +7,9 @@ spring:
   servlet:
     multipart:
       enabled: true
-      file-size-threshold: 5KB
-      max-file-size: 5MB
-      max-request-size: 10MB
+      fileSizeThreshold: 5MB
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
 
   service:
     store:

@@ -1,20 +1,24 @@
 package silgar.fmsuploadfile.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.util.unit.DataSize;
+import org.springframework.util.unit.DataUnit;
 import org.springframework.web.multipart.MultipartFile;
 import silgar.fmsuploadfile.exception.BadRequestException;
 
 @Service
 public class ValidateFileService {
 
-    @Value("${max-file-size}")
-    private long maxSizeFile;
+    @Autowired
+    private ValidationConfiguration validationConfiguration;
 
     public boolean validateFile (MultipartFile file) {
         if (file.isEmpty()){
             throw new BadRequestException("File is empty");
-        } else if (file.getSize() > maxSizeFile) {
+        } else if (file.getSize() > DataSize.parse(validationConfiguration.getMaxFileSize(), DataUnit.MEGABYTES).toBytes() ) {
             throw new BadRequestException("File size is bigger than maximum");
         } else {
             return true;
