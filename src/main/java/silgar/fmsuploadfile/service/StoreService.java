@@ -37,13 +37,13 @@ public class StoreService {
                 .exchangeToMono(response -> {
                     if (response.statusCode().equals(HttpStatus.OK)) {
                         log.info("OK: storing file in uri: "+ uri);
-                        return response.bodyToMono(HttpStatus.class).thenReturn(response.statusCode());
+                        return Mono.just(response.statusCode());
                     } else {
+                        log.info("KO: storing file");
                         throw new InternalException("Error: storing file in uri: " + uri);
                     }
                 });
 
-        resultMono.subscribe();
         log.info("Exiting NON-BLOCKING Controller!");
         return resultMono;
     }

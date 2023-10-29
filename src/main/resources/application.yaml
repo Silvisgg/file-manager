@@ -13,4 +13,4 @@ spring:
 
   service:
     store:
-      uri: http://localhost:8081/store-s3
+      uri: http://localhost:8081/file/store-s3
